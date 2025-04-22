@@ -2,12 +2,12 @@ import React from 'react'
 import { useState } from 'react'
 import { Await, Link, useNavigate } from 'react-router-dom'
 import { createUserWithEmailAndPassword, sendEmailVerification} from 'firebase/auth'
-import { auth,storage } from '../../firebase/firebaseconfig'
-import db from '../../firebase/firebaseconfig'
+import { auth,db } from '../../firebase/firebaseconfig'
+
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { doc, setDoc } from 'firebase/firestore'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+// import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 
 
@@ -18,7 +18,7 @@ const Signup = () => {
     const [Last, setLast] = useState("")
     const [Email, setEmail] = useState("")
     const [Password, setPassword] = useState("")
-    const [file, setFile] = useState(null)
+    // const [file, setFile] = useState(null)
     const navigate = useNavigate()
     
     
@@ -26,10 +26,10 @@ const Signup = () => {
     const submitHandler = async(e)=>{
         e.preventDefault()
 
-        if(!file){
-            toast.warning("file upload karo please")
-            return
-        }
+        // if(!file){
+        //     toast.warning("file upload karo please")
+        //     return
+        // }
 
         try {
             // await createUserWithEmailAndPassword(auth,Email,Password)
@@ -47,20 +47,24 @@ const Signup = () => {
                   });
                   setEmailsent(true)    
 
-                  const storageRef = ref(storage,`/document${user.uid}/${file.name}`)
-                  await uploadBytes(storageRef,file)
-                  const fileURL = await getDownloadURL(storageRef)
-                  console.log("File uploaded, URL:", fileURL)
+                //   const storageRef = ref(storage,`/document${user.uid}/${file.name}`)
+                //   await uploadBytes(storageRef,file)
+                //   const fileURL = await getDownloadURL(storageRef)
+                //   console.log("File uploaded, URL:", fileURL)
+
+                console.log("Writing to Firestore with UID:", user.uid);
 
                 await setDoc(doc(db,"users" , user.uid),{
                     Email:user.email,
                     firstName: Name,
                     lastName: Last,
                     role : "employee",
-                    isVerifiedByAdmin: false, // Ye future admin approval ke liye useful hoga
-                    documentURL: fileURL
-
+                    isVerifiedByAdmin: false  // Ye future admin approval ke liye useful hoga
+                    
                 })
+
+                
+console.log("Data successfully written to Firestore.");
                  
 
             
@@ -70,7 +74,7 @@ const Signup = () => {
                 setLast("")
                 setEmail("")
                 setPassword("")
-                setFile(null)
+                // setFile(null)
         
 
               }
@@ -136,13 +140,14 @@ const Signup = () => {
                     <input className='text-black font-bold bg-white px-5 py-2 rounded outline-none w-full  ' value={Password} onChange={(e)=>{
                         setPassword(e.target.value)
                     }} required  type="password" />
-                    <div>
+                    {/* <div>
                     <h3 className='text-white font-bold'>Upload documet (ID or Prove) </h3>
                     <input type="file" className='text-black font-bold bg-transparent px-5 py-2 rounded outline-white ' onChange={(e)=>{
                         setFile(e.target.files[0])
                     }}/>
+                    </div> */}
 
-                    </div>
+                    
                 </div>
                 <button className='text-white font-bold py-2 mt-4 rounded w-full bg-emerald-600 cursor-pointer'>Submit</button>
                     <p className='text-white text-center'>Already have an account ? <Link className='text-white font-bold' to={"/login"}>Login here</Link></p>

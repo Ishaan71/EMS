@@ -1,10 +1,10 @@
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import React, { useState } from 'react'
-import { auth } from '../../firebase/firebaseconfig'
+import { auth,db } from '../../firebase/firebaseconfig'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { doc, getDoc } from 'firebase/firestore'
-import db from '../../firebase/firebaseconfig'
+
 
 
 const Login = () => {
@@ -38,7 +38,7 @@ const Login = () => {
                 toast.error("User don't exist in database")
             }
             setTimeout(()=>{   
-                if(role === "Admin"){
+                if(role === "admin"){
                     navigate("/admindashboard", {replace : true})
                 }
                 else if (role === "employee"){
